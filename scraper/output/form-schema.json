@@ -1,0 +1,163 @@
+{
+  "steps": {
+    "1": [
+      {
+        "id": "46356d5a-f44e-46d4-8922-de2289bb10c5",
+        "name": "46356d5a-f44e-46d4-8922-de2289bb10c5",
+        "label": "46356d5a-f44e-46d4-8922-de2289bb10c5",
+        "type": "button",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 1
+      },
+      {
+        "id": "580cab39-dbd1-4edb-87b0-31accd1a475f",
+        "name": "580cab39-dbd1-4edb-87b0-31accd1a475f",
+        "label": "580cab39-dbd1-4edb-87b0-31accd1a475f",
+        "type": "button",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 1
+      },
+      {
+        "id": "ctl00_ContentPlaceHolder1_txtadharno",
+        "name": "ctl00$ContentPlaceHolder1$txtadharno",
+        "label": "ctl00$ContentPlaceHolder1$txtadharno",
+        "type": "text",
+        "placeholder": "Your Aadhaar No",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": 12
+        },
+        "step": 1
+      },
+      {
+        "id": "ctl00_ContentPlaceHolder1_txtownername",
+        "name": "ctl00$ContentPlaceHolder1$txtownername",
+        "label": "ctl00$ContentPlaceHolder1$txtownername",
+        "type": "text",
+        "placeholder": "Name as per Aadhaar",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": 100
+        },
+        "step": 1
+      },
+      {
+        "id": "ctl00_ContentPlaceHolder1_chkDecarationA",
+        "name": "ctl00$ContentPlaceHolder1$chkDecarationA",
+        "label": "ctl00$ContentPlaceHolder1$chkDecarationA",
+        "type": "checkbox",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 1
+      },
+      {
+        "id": "ctl00_ContentPlaceHolder1_btnValidateAadhaar",
+        "name": "ctl00$ContentPlaceHolder1$btnValidateAadhaar",
+        "label": "ctl00$ContentPlaceHolder1$btnValidateAadhaar",
+        "type": "submit",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 1
+      },
+      {
+        "id": "suggested-feedback-checkbox",
+        "name": "suggested-feedback-checkbox",
+        "label": "Do you like to give feedback",
+        "type": "checkbox",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 1
+      },
+      {
+        "id": "62c7ebb0-e259-4162-8637-aa63a7e31513",
+        "name": "62c7ebb0-e259-4162-8637-aa63a7e31513",
+        "label": "62c7ebb0-e259-4162-8637-aa63a7e31513",
+        "type": "button",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 1
+      }
+    ],
+    "2": [
+      {
+        "id": "0701504d-c043-46b2-9bc8-e49516020665",
+        "name": "0701504d-c043-46b2-9bc8-e49516020665",
+        "label": "0701504d-c043-46b2-9bc8-e49516020665",
+        "type": "button",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 2
+      },
+      {
+        "id": "247833ad-5573-42ec-b8e2-0c18d1f4d94e",
+        "name": "247833ad-5573-42ec-b8e2-0c18d1f4d94e",
+        "label": "247833ad-5573-42ec-b8e2-0c18d1f4d94e",
+        "type": "button",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 2
+      },
+      {
+        "id": "e1a8a6de-1b41-4caf-be35-6c2c64617ebd",
+        "name": "e1a8a6de-1b41-4caf-be35-6c2c64617ebd",
+        "label": "e1a8a6de-1b41-4caf-be35-6c2c64617ebd",
+        "type": "button",
+        "placeholder": "",
+        "validation": {
+          "required": false,
+          "pattern": "",
+          "minLength": null,
+          "maxLength": null
+        },
+        "step": 2
+      }
+    ]
+  },
+  "scrapedAt": "2026-07-01T07:47:31.182901+00:00"
+}
