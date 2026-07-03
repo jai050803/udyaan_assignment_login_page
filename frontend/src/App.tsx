@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { ProgressTracker } from './components/ProgressTracker/ProgressTracker';
-
-const StepOne = ({ onSuccess }: { onSuccess: (token: string) => void }) => (
-  <div>
-    <h2>Step One Placeholder</h2>
-    <button onClick={() => onSuccess('dummy-token')}>Complete Step One</button>
-  </div>
-);
+import { AadhaarForm } from './components/StepOne/AadhaarForm';
 
 const StepTwo = ({ sessionToken }: { sessionToken: string }) => (
   <div>
@@ -24,7 +18,7 @@ function App() {
       <ProgressTracker currentStep={currentStep} />
       
       {currentStep === 1 && (
-        <StepOne 
+        <AadhaarForm 
           onSuccess={(token) => {
             setSessionToken(token);
             setCurrentStep(2);

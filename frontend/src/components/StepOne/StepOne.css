@@ -1,0 +1,33 @@
+.step-card {
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.step-title {
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.step-subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.resend-container {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.timer-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.otp-actions {
+  margin-top: 24px;
+}
