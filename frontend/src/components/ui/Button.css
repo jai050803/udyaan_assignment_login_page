@@ -35,3 +35,9 @@
 .btn-secondary:hover:not(:disabled) {
   background-color: rgba(26, 75, 140, 0.05);
 }
+
+@media (max-width: 600px) {
+  .btn {
+    width: 100%;
+  }
+}

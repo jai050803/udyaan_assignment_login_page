@@ -122,7 +122,7 @@ export const PanForm: React.FC<PanFormProps> = ({ sessionToken, aadhaar, schemaF
         error={errors.pincode?.message} 
       />
 
-      <div style={{ display: 'flex', gap: '16px' }}>
+      <div className="city-state-row">
         <Input
           label="City"
           readOnly

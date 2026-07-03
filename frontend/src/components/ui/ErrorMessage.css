@@ -1,0 +1,23 @@
+.error-message {
+  color: var(--color-error, #d32f2f);
+  background-color: rgba(211, 47, 47, 0.1);
+  border-radius: var(--radius, 4px);
+  font-size: 14px;
+  overflow: hidden;
+  animation: slideDownError 0.3s ease forwards;
+}
+
+@keyframes slideDownError {
+  from {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+    padding: 0 14px;
+  }
+  to {
+    max-height: 100px;
+    opacity: 1;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+  }
+}

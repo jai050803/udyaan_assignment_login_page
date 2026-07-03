@@ -25,6 +25,8 @@
 .input-field:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(26, 75, 140, 0.2);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
 }
 
 .input-field.input-error {
@@ -33,6 +35,8 @@
 
 .input-field.input-error:focus {
   box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.2);
+  outline: 2px solid var(--color-error);
+  outline-offset: 1px;
 }
 
 .input-error-msg {
