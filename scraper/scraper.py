@@ -1,8 +1,8 @@
 import asyncio
 import json
 import os
-from playwright.async_api import async_playwright
-from bs4 import BeautifulSoup
+from playwright.async_api import async_playwright # type: ignore
+from bs4 import BeautifulSoup # type: ignore
 
 async def scrape_udyam():
     url = "https://udyamregistration.gov.in/UdyamRegistration.aspx"

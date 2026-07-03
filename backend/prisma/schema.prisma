@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Registration {
+  id           String   @id @default(uuid())
+  aadhaarHash  String   @unique
+  pan          String
+  businessName String
+  ownerName    String
+  pincode      String   @db.VarChar(6)
+  city         String
+  state        String
+  status       Status   @default(PENDING)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("registrations")
+}
+
+model OtpSession {
+  id          String   @id @default(uuid())
+  aadhaarHash String
+  otpHash     String
+  expiresAt   DateTime
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("otp_sessions")
+}
+
+enum Status {
+  PENDING
+  VERIFIED
+  REJECTED
+}
