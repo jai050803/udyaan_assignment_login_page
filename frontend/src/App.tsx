@@ -1,9 +1,5 @@
 import { useState } from 'react';
-
-// Placeholders
-const ProgressTracker = ({ currentStep }: { currentStep: number }) => (
-  <div>Step {currentStep} of 2</div>
-);
+import { ProgressTracker } from './components/ProgressTracker/ProgressTracker';
 
 const StepOne = ({ onSuccess }: { onSuccess: (token: string) => void }) => (
   <div>
