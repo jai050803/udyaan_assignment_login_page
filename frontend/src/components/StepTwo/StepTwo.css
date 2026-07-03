@@ -1,0 +1,20 @@
+.success-card {
+  background-color: #e3f2fd;
+  border: 1px solid #bbdefb;
+  color: #1565c0;
+  padding: 32px;
+  border-radius: 8px;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.success-card h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.success-card p {
+  font-size: 16px;
+}

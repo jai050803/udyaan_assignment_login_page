@@ -10,7 +10,7 @@ import { OtpInput } from './OtpInput';
 import './StepOne.css';
 
 interface AadhaarFormProps {
-  onSuccess: (token: string) => void;
+  onSuccess: (token: string, aadhaar: string) => void;
 }
 
 export const AadhaarForm: React.FC<AadhaarFormProps> = ({ onSuccess }) => {
@@ -35,7 +35,7 @@ export const AadhaarForm: React.FC<AadhaarFormProps> = ({ onSuccess }) => {
   };
 
   if (showOtp) {
-    return <OtpInput aadhaar={currentAadhaar} onVerified={onSuccess} />;
+    return <OtpInput aadhaar={currentAadhaar} onVerified={(token) => onSuccess(token, currentAadhaar)} />;
   }
 
   return (
