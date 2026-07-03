@@ -9,7 +9,9 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// TODO: mount routes at /api, e.g. app.use('/api', routesIndex);
+import routes from './routes';
+
+app.use('/api', routes);
 
 app.use(errorHandler);
 
