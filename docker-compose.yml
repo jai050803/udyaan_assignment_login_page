@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dockerpassword
+      POSTGRES_DB: udyam_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    environment:
+      - PORT=4000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=udyam_db
+      - DB_USER=postgres
+      - DB_PASSWORD=dockerpassword
+      - DATABASE_URL=postgresql://postgres:dockerpassword@postgres:5432/udyam_db?schema=public
+      - SESSION_SECRET=docker_session_secret
+      - JWT_SECRET=docker_jwt_secret
+      - JWT_EXPIRES_IN=30m
+      - OTP_EXPIRY_MINUTES=10
+      - OTP_RATE_LIMIT_PER_HOUR=3
+      - POSTPIN_BASE_URL=https://api.postalpincode.in/pincode
+    depends_on:
+      - postgres
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
