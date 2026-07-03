@@ -10,49 +10,62 @@ async def scrape_udyam():
     
     async with async_playwright() as p:
         try:
-            print(f"Launching headless browser...")
+            print("🚀 Launching browser...")
             browser = await p.chromium.launch(headless=True)
-            page = await browser.new_page()
+            page = await browser.new_page(
+                viewport={"width": 1920, "height": 1080},
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            )
             
             print(f"Navigating to {url}")
-            await page.goto(url, wait_until="networkidle")
+            await page.goto(url, wait_until="networkidle", timeout=30000)
             
-            # Step 1
-            print("Extracting Step 1 fields...")
+            # === STEP 1: Aadhaar Form ===
+            print("📋 Extracting Step 1 (Aadhaar)...")
             html = await page.content()
             step1_fields = extract_fields_from_html(html, step=1)
             fields_data.extend(step1_fields)
             
-            # Try to trigger Step 2 elements
-            print("Attempting to reach Step 2...")
+            # Trigger progression to Step 2 (simulate Aadhaar validation flow)
+            print("🔄 Attempting to progress to PAN / Step 2...")
             try:
-                # Usually there's a button to validate Aadhaar
-                await page.click("button[id*='btnValidate'], input[id*='btnValidate'], input[type='submit'], button[type='submit']", timeout=3000)
-                await page.wait_for_timeout(2000)
-            except Exception:
-                # Ignore if button click fails or times out
-                pass
+                # Click the main validate button
+                await page.click("#ctl00_ContentPlaceHolder1_btnValidateAadhaar, input[type='submit'], button[type='submit']", timeout=5000)
+                await page.wait_for_timeout(3000)
+                
+                # Sometimes OTP appears - capture it if visible
+                await page.wait_for_selector("input[id*='otp'], input[placeholder*='OTP']", timeout=5000)
+                print("✅ OTP field detected")
+            except Exception as e:
+                print(f"Note: Could not auto-progress (expected in headless): {e}")
             
-            print("Extracting Step 2 fields...")
+            # === STEP 2: PAN Form ===
+            print("📋 Extracting Step 2 (PAN + Organisation)...")
             html_step2 = await page.content()
             step2_fields = extract_fields_from_html(html_step2, step=2)
             
-            # Deduplicate
-            step1_ids = {f.get('id') for f in step1_fields if f.get('id')}
-            step1_names = {f.get('name') for f in step1_fields if f.get('name')}
+            # Deduplication + filtering noise
+            seen = set()
+            clean_fields = []
             
-            for f in step2_fields:
-                fid = f.get('id')
-                fname = f.get('name')
-                if (fid and fid in step1_ids) or (fname and fname in step1_names):
+            for field in fields_data + step2_fields:
+                key = (field.get('id'), field.get('name'), field.get('type'))
+                if key in seen or not key[0] and not key[1]:
                     continue
-                fields_data.append(f)
+                # Filter out junk buttons
+                if field['tag'] == 'button' and not field.get('id') and not field.get('name'):
+                    continue
+                if "feedback" in (field.get('id') or '').lower():
+                    continue
                 
+                seen.add(key)
+                clean_fields.append(field)
+            
             await browser.close()
-            return fields_data
+            return clean_fields
             
         except Exception as e:
-            print(f"Error during scraping: {e}")
+            print(f"❌ Error: {e}")
             return []
 
 def extract_fields_from_html(html_content, step):
@@ -63,26 +76,35 @@ def extract_fields_from_html(html_content, step):
     for el in elements:
         tag = el.name
         el_type = el.get('type')
+        
         if tag == 'input' and el_type == 'hidden':
             continue
             
         el_id = el.get('id')
         el_name = el.get('name')
+        
+        # Skip completely anonymous elements
         if not el_id and not el_name and tag != 'button':
             continue
             
+        # Better label extraction
         label_text = None
-        if el.get('aria-label'):
-            label_text = el.get('aria-label')
-        elif el_id:
+        if el_id:
             label_el = soup.find('label', {'for': el_id})
             if label_el:
                 label_text = label_el.get_text(strip=True)
-                
-        if not label_text and el.parent and el.parent.name == 'label':
-            label_text = el.parent.get_text(strip=True)
-            
-        fields.append({
+        
+        if not label_text:
+            # Try parent label or nearby text
+            parent = el.find_parent('label')
+            if parent:
+                label_text = parent.get_text(strip=True)
+            elif el.get('placeholder'):
+                label_text = el.get('placeholder')
+            elif el.get('aria-label'):
+                label_text = el.get('aria-label')
+        
+        field = {
             'tag': tag,
             'type': el_type,
             'name': el_name,
@@ -91,17 +113,23 @@ def extract_fields_from_html(html_content, step):
             'label': label_text,
             'pattern': el.get('pattern'),
             'maxlength': el.get('maxlength'),
-            'required': el.has_attr('required'),
-            'step': step
-        })
+            'required': el.has_attr('required') or 'required' in (el.get('class') or []),
+            'step': step,
+            'value': el.get('value')  # helpful for debugging
+        }
+        fields.append(field)
+    
     return fields
 
 if __name__ == "__main__":
     data = asyncio.run(scrape_udyam())
+    
     output_dir = os.path.join(os.path.dirname(__file__), "output")
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, "raw_fields.json")
     
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
-    print(f"Scraping completed. Raw data saved to {output_file}")
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    
+    print(f"✅ Scraping completed! Data saved to: {output_file}")
+    print(f"Total fields extracted: {len(data)}")
