@@ -1,26 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { panFormSchema, PanFormData } from '../../validators/pan';
 import { validatePan, submitRegistration } from '../../services/api';
 import { PinAutofill } from './PinAutofill';
+import { FieldDef } from '../../types';
 import './StepTwo.css';
 
 interface PanFormProps {
   sessionToken: string;
   aadhaar: string;
+  schemaFields?: FieldDef[];
 }
 
-export const PanForm: React.FC<PanFormProps> = ({ sessionToken, aadhaar }) => {
+export const PanForm: React.FC<PanFormProps> = ({ sessionToken, aadhaar, schemaFields }) => {
   const [apiError, setApiError] = useState<string | null>(null);
   const [successId, setSuccessId] = useState<string | null>(null);
   const [panValidating, setPanValidating] = useState(false);
 
+  const dynamicSchema = useMemo(() => {
+    if (!schemaFields) return panFormSchema;
+    return panFormSchema.superRefine((data, ctx) => {
+      schemaFields.forEach(field => {
+        const zKeys = Object.keys(data);
+        const matchedKey = zKeys.find(k => field.name.toLowerCase().includes(k.toLowerCase()) || field.id.toLowerCase().includes(k.toLowerCase()));
+        
+        if (matchedKey) {
+          const value = (data as any)[matchedKey];
+          if (value && typeof value === 'string' && field.validation?.pattern) {
+            const regex = new RegExp(field.validation.pattern, 'i');
+            if (!regex.test(value)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: [matchedKey],
+                message: `Format error: Does not match dynamic schema pattern`,
+              });
+            }
+          }
+        }
+      });
+    });
+  }, [schemaFields]);
+
   const { register, handleSubmit, formState: { errors, isSubmitting }, control, setValue } = useForm<PanFormData>({
-    resolver: zodResolver(panFormSchema)
+    resolver: zodResolver(dynamicSchema)
   });
 
   const onSubmit = async (data: PanFormData) => {

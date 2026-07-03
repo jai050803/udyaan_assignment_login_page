@@ -1,24 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { aadhaarSchema, AadhaarInput } from '../../validators/aadhaar';
 import { validateAadhaar, sendOtp } from '../../services/api';
 import { OtpInput } from './OtpInput';
+import { FieldDef } from '../../types';
 import './StepOne.css';
 
 interface AadhaarFormProps {
   onSuccess: (token: string, aadhaar: string) => void;
+  schemaFields?: FieldDef[];
 }
 
-export const AadhaarForm: React.FC<AadhaarFormProps> = ({ onSuccess }) => {
+export const AadhaarForm: React.FC<AadhaarFormProps> = ({ onSuccess, schemaFields }) => {
   const [showOtp, setShowOtp] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   
+  const dynamicSchema = useMemo(() => {
+    if (!schemaFields) return aadhaarSchema;
+    return aadhaarSchema.superRefine((data, ctx) => {
+      schemaFields.forEach(field => {
+        const zKeys = Object.keys(data);
+        const matchedKey = zKeys.find(k => field.name.toLowerCase().includes(k.toLowerCase()) || field.id.toLowerCase().includes(k.toLowerCase()));
+        
+        if (matchedKey) {
+          const value = (data as any)[matchedKey];
+          if (value && typeof value === 'string' && field.validation?.pattern) {
+            const regex = new RegExp(field.validation.pattern);
+            if (!regex.test(value)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: [matchedKey],
+                message: `Format error: Does not match dynamic schema pattern`,
+              });
+            }
+          }
+        }
+      });
+    });
+  }, [schemaFields]);
+
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<AadhaarInput>({
-    resolver: zodResolver(aadhaarSchema)
+    resolver: zodResolver(dynamicSchema)
   });
 
   const currentAadhaar = watch('aadhaar');
