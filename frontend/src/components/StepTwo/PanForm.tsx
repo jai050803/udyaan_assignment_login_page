@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { ErrorMessage } from '../ui/ErrorMessage';
 import { panFormSchema, PanFormData } from '../../validators/pan';
-import { validatePan, submitRegistration, getPinDetails } from '../../services/api';
+import { validatePan, submitRegistration } from '../../services/api';
+import { PinAutofill } from './PinAutofill';
 import './StepTwo.css';
 
 interface PanFormProps {
@@ -16,37 +17,11 @@ interface PanFormProps {
 export const PanForm: React.FC<PanFormProps> = ({ sessionToken, aadhaar }) => {
   const [apiError, setApiError] = useState<string | null>(null);
   const [successId, setSuccessId] = useState<string | null>(null);
-  const [pinLoading, setPinLoading] = useState(false);
   const [panValidating, setPanValidating] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue } = useForm<PanFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, control, setValue } = useForm<PanFormData>({
     resolver: zodResolver(panFormSchema)
   });
-
-  const pincode = watch('pincode');
-
-  useEffect(() => {
-    if (pincode?.length === 6) {
-      const fetchPin = async () => {
-        setPinLoading(true);
-        setApiError(null);
-        try {
-          const res = await getPinDetails(pincode);
-          if (res.data) {
-            setValue('city', res.data.city, { shouldValidate: true });
-            setValue('state', res.data.state, { shouldValidate: true });
-          }
-        } catch (err: any) {
-          setApiError(err.message || 'Failed to fetch Pincode details');
-          setValue('city', '');
-          setValue('state', '');
-        } finally {
-          setPinLoading(false);
-        }
-      };
-      fetchPin();
-    }
-  }, [pincode, setValue]);
 
   const onSubmit = async (data: PanFormData) => {
     setApiError(null);
@@ -114,14 +89,11 @@ export const PanForm: React.FC<PanFormProps> = ({ sessionToken, aadhaar }) => {
         {...register('ownerName')}
       />
 
-      <Input
-        label="Pincode"
-        maxLength={6}
-        placeholder="110001"
-        error={errors.pincode?.message}
-        {...register('pincode')}
+      <PinAutofill 
+        control={control} 
+        setValue={setValue} 
+        error={errors.pincode?.message} 
       />
-      {pinLoading && <p style={{ fontSize: '12px', color: '#666', marginTop: '-10px', marginBottom: '10px' }}>Loading location...</p>}
 
       <div style={{ display: 'flex', gap: '16px' }}>
         <Input
@@ -141,7 +113,7 @@ export const PanForm: React.FC<PanFormProps> = ({ sessionToken, aadhaar }) => {
       </div>
 
       <div className="otp-actions">
-        <Button type="submit" isLoading={isSubmitting || panValidating || pinLoading} style={{ width: '100%' }}>
+        <Button type="submit" isLoading={isSubmitting || panValidating} style={{ width: '100%' }}>
           Submit Registration
         </Button>
       </div>
