@@ -59,7 +59,7 @@ export const verifyOtpController = async (
       return;
     }
 
-    const sessionToken = jwt.sign({ aadhaarHash }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN });
+    const sessionToken = jwt.sign({ aadhaarHash }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as any });
 
     res.status(200).json({
       success: true,
